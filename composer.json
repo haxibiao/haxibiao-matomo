@@ -1,0 +1,33 @@
+{
+    "name": "haxibiao/matomo",
+    "description": "哈希表matomo",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ivan",
+            "email": "ivan@haxibiao.com"
+        }
+    ],
+    "require": {
+        "matomo/matomo-php-tracker": "^2.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "haxibiao\\matomo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "haxibiao\\matomo\\MatomoServiceProvider"
+            ]
+        }
+    }
+}
