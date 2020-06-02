@@ -81,7 +81,7 @@ function tcp_unpack(string $data): string
     return substr($data, 2, unpack('n', substr($data, 0, 2), 0)[1]);
 }
 
-//开始主要用这个埋点，能快速区别新老用户的事件趋势和分布
+//FIXME: 开始主要用这个埋点，能快速区别新老用户的事件趋势和分布， 重构答赚里的这个不同的名字...
 function app_track_user_event($action, $name = false, $value = 1)
 {
     $category = getUserCategoryTag();
