@@ -3,7 +3,6 @@
 namespace haxibiao\matomo;
 
 use Illuminate\Console\Command;
-use Illuminate\Container\Container;
 use Illuminate\Support\Str;
 
 class InstallCommand extends Command
@@ -21,7 +20,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $description = '注册 haxibiao/matomo Provider';
+    protected $description = '安装 haxibiao/matomo';
 
     /**
      * Execute the Console command.
@@ -30,35 +29,9 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        $this->comment('Register Helper Service Provider...');
-        $this->registerHelperServiceProvider();
-    }
 
-    /**
-     * Register the Helper service provider in the application configuration file.
-     *
-     * @return void
-     */
-    protected function registerHelperServiceProvider()
-    {
+        $this->comment('发布 资源文件 ...');
+        $this->callSilent('matomo:publish', ['--force' => true]);
 
-        //避免重复添加ServiceProvider
-        $appConfigPHPStr = file_get_contents(config_path('app.php'));
-        if (Str::contains($appConfigPHPStr, 'MatomoServiceProvider::class')) {
-            return;
-        }
-
-        $namespace = Str::replaceLast('\\', '', $this->getAppNamespace());
-
-        file_put_contents(config_path('app.php'), str_replace(
-            "{$namespace}\\Providers\EventServiceProvider::class," . PHP_EOL,
-            "{$namespace}\\Providers\EventServiceProvider::class," . PHP_EOL . "        haxibiao\matomo\MatomoServiceProvider::class," . PHP_EOL,
-            file_get_contents(config_path('app.php'))
-        ));
-    }
-
-    protected function getAppNamespace()
-    {
-        return Container::getInstance()->getNamespace();
     }
 }
