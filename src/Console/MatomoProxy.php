@@ -162,6 +162,7 @@ class MatomoProxy extends Command
 
                     $tracker->setUserId($event->user_id);
                     $tracker->setIp($event->ip);
+                    $tracker->setTokenAuth(config('matomo.token_auth'));
 
                     //设备系统
                     $tracker->setCustomTrackingParameter('dimension1', $event->dimension1);

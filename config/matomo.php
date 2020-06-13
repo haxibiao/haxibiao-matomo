@@ -3,6 +3,7 @@
 return [
     'use_swoole' => env('MATOMO_USE_SWOOLE', false), //是否借用swoole的proxy实现tcp+bulk发送
     'proxy_port' => env('MATOMO_PROXY_PORT', 9502),
+    'token_auth' => env('MATOMO_TOKEN_AUTH'),
 
     'matomo_id'  => env('MATOMO_ID'), //后端事件统计的site_id
     'matomo_url' => env('MATOMO_URL'), //后端事件统计查看的matomo url
