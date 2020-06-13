@@ -12,7 +12,7 @@ class MatomoProxy extends Command
      *
      * @var string
      */
-    protected $signature = 'matomo:proxy {--num=10} {--port=9502}';
+    protected $signature = 'matomo:proxy {--num=5} {--port=9502}';
 
     /**
      * The console command description.
@@ -45,7 +45,7 @@ class MatomoProxy extends Command
 
         $config = [
             'siteId' => $siteId,
-            'matomo' => config('matomo.site_url'),
+            'matomo' => config('matomo.matomo_url'),
         ];
         $tracker = new \MatomoTracker($config['siteId'], $config['matomo']);
         // $tracker->setCountry('中国'); //TODO: 需要tokenAuth
@@ -101,10 +101,10 @@ class MatomoProxy extends Command
     public function trackEvent($data)
     {
         //这个日活用户和独立ip数就不对了
-        $this->sendEventByNum($data);
+        // $this->sendEventByNum($data);
 
         //这样每个用户的请求bulk起来一起发送
-        // $this->sendEventByUser($data);
+        $this->sendEventByUser($data);
     }
 
     public function sendEventByNum($data)
@@ -132,14 +132,15 @@ class MatomoProxy extends Command
             if (count($user_events) >= $this->option('num')) {
                 $this->sendBulkEvents($user_events);
                 $this->events[$event->user_id] = [];
-                $this->info("============== sent 用户: $event->user_id 的events");
+                $this->info("============== sent 用户: $event->user_id 的 events");
             } else {
-                $this->warn("用户 $event->user_id 已经累计了events:" . count($user_events));
+                $this->warn("用户 $event->user_id 已经累计了 events:" . count($user_events));
             }
         } else {
             $this->info("新用户访问：" . $event->user_id);
             $user_events[]                 = $event;
             $this->events[$event->user_id] = $user_events;
+            //FIXME: 定时把所有新用户不够bulk num的每分钟都统一逐个发送出去
         }
     }
 
@@ -161,15 +162,6 @@ class MatomoProxy extends Command
 
                     $tracker->setUserId($event->user_id);
                     $tracker->setIp($event->ip);
-
-                    //随机生成一些UA 先测试下
-                    $os = Str::contains($event->dimension1, 'android') ? 'android' : 'iphone';
-
-                    //APP内的matomo sdk 和网页端track的时候能提供更好的agent信息，后端event track 太难了 (LB,NGINX..)..
-                    // $ua = new \UserAgent();
-                    // // $ua->getOS('Android [7.1|6.0|5.1]; Samsung Galaxy[ Note III| S6| S7|]');
-                    // $uastr = $ua->generate($os);
-                    // $tracker->setUserAgent($uastr);
 
                     //设备系统
                     $tracker->setCustomTrackingParameter('dimension1', $event->dimension1);
@@ -197,22 +189,4 @@ class MatomoProxy extends Command
 
     }
 
-    //github上示范的 mixed server
-    public function runDemoServer()
-    {
-        // $server = new \Swoole\WebSocket\Server('0.0.0.0', 9501, SWOOLE_BASE);
-        // $server->set(['open_http2_protocol' => true]);
-
-        // // http && http2
-        // $server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-        //     $data = $request->rawcontent();
-        //     try {
-        //         $this->trackEvent($data);
-        //         $response->end('http2 server processed ');
-        //     } catch (\Throwable $th) {
-        //         $this->error($th->getMessage());
-        //     }
-        // });
-
-    }
 }

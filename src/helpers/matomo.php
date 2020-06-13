@@ -5,7 +5,6 @@
  */
 function track_web($category, $action, $name = null, $value = null)
 {
-    //MATOMO_WEB_ID用于网页事件跟踪，情况和APP里的MATOMO_SITE_ID上下文不同，一般是不同的ID
     $web_idSite = config('matomo.web_id');
     $web_url    = config('matomo.web_url');
     $tracker    = new \MatomoTracker($web_idSite, $web_url);
@@ -41,7 +40,7 @@ function app_track_event($category, $action, $name = false, $value = false)
         $tracker->setCustomVariable(2, "用户", $user_type, "visit");
         $tracker->setCustomVariable(3, "机型", request()->header('brand'), "visit");
 
-        $tracker->setUserId(getUserId());
+        $tracker->setUserId(getUniqueUserId());
         $tracker->setIp(getIp());
         $tracker->setTokenAuth("64b4543a0f6b01cbfa9eb7ed5dde840b");
         $tracker->setRequestTimeout(1); //最多卡1s
@@ -76,16 +75,14 @@ function wrapMatomoEventData($event)
     //传给自定义变量 服务器
     $event['server'] = gethostname();
 
-    if (project_is_dtzq()) {
-        $event['dimension1'] = getOsSystemVersion(); //设备系统带版本
-        $event['dimension2'] = get_referer(); //下载渠道
-        $event['dimension3'] = getAppVersion(); //版本
-        $event['dimension4'] = getAppVersion() . "(build" . getAppBuild() . ")"; //热更新
-        $event['dimension5'] = getUserCategoryTag(); //新老用户分类
-        $event['dimension6'] = getDeviceBrand(); //用户机型品牌
-    }
+    $event['dimension1'] = getOsSystemVersion(); //设备系统带版本
+    $event['dimension2'] = get_referer(); //下载渠道
+    $event['dimension3'] = getAppVersion(); //版本
+    $event['dimension4'] = getAppVersion() . "(build" . getAppBuild() . ")"; //热更新
+    $event['dimension5'] = getUserCategoryTag(); //新老用户分类
+    $event['dimension6'] = getDeviceBrand(); //用户机型品牌
 
-    $event['siteId'] = env('MATOMO_SITE_ID', 1);
+    $event['siteId'] = config('matomo.matomo_id');
     return $event;
 }
 
