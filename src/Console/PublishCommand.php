@@ -31,7 +31,7 @@ class PublishCommand extends Command
 
         $this->call('vendor:publish', [
             '--tag'   => 'matomo-config',
-            '--force' => false,
+            '--force' => true,
         ]);
 
     }

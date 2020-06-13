@@ -31,7 +31,7 @@ class InstallCommand extends Command
     {
 
         $this->comment('发布 资源文件 ...');
-        $this->callSilent('matomo:publish', ['--force' => true]);
+        $this->call('matomo:publish', ['--force' => true]);
 
     }
 }

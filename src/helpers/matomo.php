@@ -26,8 +26,46 @@ function app_track_event($category, $action, $name = false, $value = false)
 
     $event = wrapMatomoEventData($event);
 
-    //发送事件数据
-    sendMatomoEvent($event);
+    if (config('matomo.use_swoole')) {
+        //TCP发送事件数据
+        sendMatomoTcpEvent($event);
+    } else {
+
+        //直接发送，兼容matomo 3.13.6
+        $tracker = new \MatomoTracker(config('matomo.matomo_id'), config('matomo.matomo_url'));
+        $tracker->setCustomVariable(1, "服务器", gethostname(), "visit");
+        $user_type = '游客';
+        if ($user = checkUser()) {
+            $user_type = $user->create_at > today() ? '老用户' : '新用户';
+        }
+        $tracker->setCustomVariable(2, "用户", $user_type, "visit");
+        $tracker->setCustomVariable(3, "机型", request()->header('brand'), "visit");
+
+        $tracker->setUserId(getUserId());
+        $tracker->setIp(getIp());
+        $tracker->setTokenAuth("64b4543a0f6b01cbfa9eb7ed5dde840b");
+        $tracker->setRequestTimeout(1); //最多卡1s
+
+        //设备系统
+        $tracker->setCustomTrackingParameter('dimension1', $event['dimension1']);
+        //安装来源
+        $tracker->setCustomTrackingParameter('dimension2', $event['dimension2']);
+        //APP版本
+        $tracker->setCustomTrackingParameter('dimension3', $event['dimension3']);
+        //APP build
+        $tracker->setCustomTrackingParameter('dimension4', $event['dimension4']);
+        //新老用户分类
+        $tracker->setCustomTrackingParameter('dimension5', $event['dimension5']);
+        //用户机型
+        $tracker->setCustomTrackingParameter('dimension6', $event['dimension6']);
+
+        try {
+            //send
+            $tracker->doTrackEvent($category, $action, $name, $value);
+        } catch (\Throwable $ex) {
+            return false;
+        }
+    }
 }
 
 function wrapMatomoEventData($event)
@@ -51,7 +89,7 @@ function wrapMatomoEventData($event)
     return $event;
 }
 
-function sendMatomoEvent(array $event)
+function sendMatomoTcpEvent(array $event)
 {
     $event['cdt'] = time();
     try {

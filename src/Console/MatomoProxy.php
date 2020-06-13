@@ -12,7 +12,7 @@ class MatomoProxy extends Command
      *
      * @var string
      */
-    protected $signature = 'matomo:proxy {--num=10} {--port=9602}';
+    protected $signature = 'matomo:proxy {--num=10} {--port=9502}';
 
     /**
      * The console command description.
@@ -45,7 +45,7 @@ class MatomoProxy extends Command
 
         $config = [
             'siteId' => $siteId,
-            'matomo' => config('matomo.web_url'),
+            'matomo' => config('matomo.site_url'),
         ];
         $tracker = new \MatomoTracker($config['siteId'], $config['matomo']);
         // $tracker->setCountry('中国'); //TODO: 需要tokenAuth
