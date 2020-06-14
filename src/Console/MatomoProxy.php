@@ -50,6 +50,8 @@ class MatomoProxy extends Command
         $tracker = new \MatomoTracker($config['siteId'], $config['matomo']);
         // $tracker->setCountry('中国'); //TODO: 需要tokenAuth
         $tracker->setBrowserLanguage('zh-cn');
+        $tracker->setTokenAuth(config('matomo.token_auth'));
+        $tracker->disableCookieSupport();
         $this->trackers[$key] = $tracker;
         return $tracker;
     }
@@ -101,10 +103,10 @@ class MatomoProxy extends Command
     public function trackEvent($data)
     {
         //这个日活用户和独立ip数就不对了
-        // $this->sendEventByNum($data);
+        $this->sendEventByNum($data);
 
         //这样每个用户的请求bulk起来一起发送
-        $this->sendEventByUser($data);
+        // $this->sendEventByUser($data);
     }
 
     public function sendEventByNum($data)
@@ -162,7 +164,7 @@ class MatomoProxy extends Command
 
                     $tracker->setUserId($event->user_id);
                     $tracker->setIp($event->ip);
-                    $tracker->setTokenAuth(config('matomo.token_auth'));
+                    $tracker->setForceVisitDateTime($event->cdt);
 
                     //设备系统
                     $tracker->setCustomTrackingParameter('dimension1', $event->dimension1);
@@ -177,6 +179,7 @@ class MatomoProxy extends Command
                     //用户机型
                     $tracker->setCustomTrackingParameter('dimension6', $event->dimension6);
 
+                    // $url = $tracker->getUrlTrackEvent($event->category, $event->action, $event->name, $event->value);
                     //send
                     $tracker->doTrackEvent($event->category, $event->action, $event->name, $event->value);
                 }

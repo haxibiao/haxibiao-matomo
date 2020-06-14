@@ -3,33 +3,33 @@
 /**
  * 主要的web网页请求事件track到matomo
  */
-function track_web($category, $action, $name = null, $value = null)
+function track_web($category, $action = null, $name = null, $value = null)
 {
     $web_idSite = config('matomo.web_id');
     $web_url    = config('matomo.web_url');
     $tracker    = new \MatomoTracker($web_idSite, $web_url);
-    $tracker->doTrackEvent($category, $action, $name, $value);
+    $tracker->doTrackEvent($category, $action ?? $category, $name, $value);
 }
 
 /**
  * 主要的后端事件track到matomo
  */
-function app_track_event($category, $action, $name = false, $value = false)
+function app_track_event($category, $action = null, $name = false, $value = false)
 {
     $event['category'] = $category;
-    $event['action']   = $action;
+    $event['action']   = $action ?? $category;
     $event['name']     = $name;
-
     //避免进入的value有对象，不是String会异常
     $event['value'] = $value instanceof String ? $value : false;
+    $event['cdt']   = now()->timestamp;
 
+    //包装必要的事件参数进入数组
     $event = wrapMatomoEventData($event);
 
     if (config('matomo.use_swoole')) {
         //TCP发送事件数据
         sendMatomoTcpEvent($event);
     } else {
-
         //直接发送，兼容matomo 3.13.6
         $tracker = new \MatomoTracker(config('matomo.matomo_id'), config('matomo.matomo_url'));
         $tracker->setCustomVariable(1, "服务器", gethostname(), "visit");
@@ -42,8 +42,9 @@ function app_track_event($category, $action, $name = false, $value = false)
 
         $tracker->setUserId(getUniqueUserId());
         $tracker->setIp(getIp());
-        $tracker->setTokenAuth("64b4543a0f6b01cbfa9eb7ed5dde840b");
+        $tracker->setTokenAuth(config('matomo.token_auth'));
         $tracker->setRequestTimeout(1); //最多卡1s
+        $tracker->setForceVisitDateTime(now()->timestamp);
 
         //设备系统
         $tracker->setCustomTrackingParameter('dimension1', $event['dimension1']);
@@ -59,8 +60,9 @@ function app_track_event($category, $action, $name = false, $value = false)
         $tracker->setCustomTrackingParameter('dimension6', $event['dimension6']);
 
         try {
-            //send
+            //直接发送到matomo
             $tracker->doTrackEvent($category, $action, $name, $value);
+            // $url = $tracker->getUrlTrackEvent($category, $action, $name, $value);
         } catch (\Throwable $ex) {
             return false;
         }
@@ -119,7 +121,9 @@ function tcp_unpack(string $data): string
 //FIXME: 开始主要用这个埋点，能快速区别新老用户的事件趋势和分布， 重构答赚里的这个不同的名字...
 function app_track_user_event($action, $name = false, $value = 1)
 {
-    $category = getUserCategoryTag();
+    //区分新老用户在事件分类不好算维度，还是靠真的维度去区分吧
+    // $category = getUserCategoryTag();
+    $category = $action;
     app_track_event($category, $action, $name, $value);
 }
 
@@ -145,6 +149,7 @@ function app_track_task($action, $name = false, $value = false)
 
 function getUniqueUserId()
 {
+    return 4;
     try {
         return getUserId();
     } catch (\Exception $ex) {
