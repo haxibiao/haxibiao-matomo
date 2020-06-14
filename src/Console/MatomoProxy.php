@@ -12,7 +12,7 @@ class MatomoProxy extends Command
      *
      * @var string
      */
-    protected $signature = 'matomo:proxy {--num=5} {--port=9502}';
+    protected $signature = 'matomo:proxy {--num=5} {--port=}';
 
     /**
      * The console command description.
@@ -63,7 +63,7 @@ class MatomoProxy extends Command
      */
     public function handle()
     {
-        $port = $this->option('port');
+        $port = $this->option('port') ?? config('matomo.proxy_port');
 
         $server = new \Swoole\WebSocket\Server('0.0.0.0', $port - 1, SWOOLE_BASE);
         // $server->set(['open_http2_protocol' => true]);
