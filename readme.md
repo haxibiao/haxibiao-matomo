@@ -7,7 +7,7 @@
 
 
 ## 环境要求
-1. ...
+1. 如果开启MATOMO_USE_SWOOLE, 需要当前服务器pecl install swoole然后service php-fpm restart
 
 ## 安装步骤
 
