@@ -149,7 +149,6 @@ function app_track_task($action, $name = false, $value = false)
 
 function getUniqueUserId()
 {
-    return 4;
     try {
         return getUserId();
     } catch (\Exception $ex) {
