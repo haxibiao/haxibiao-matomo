@@ -165,3 +165,22 @@ function app_track_send_message()
 {
     app_track_user('发送消息');
 }
+
+/**
+ * 用户分类（匿名,新,未提现,老）
+ */
+function getUserCategoryTag()
+{
+    $user = getUser(false);
+    if (blank($user)) {
+        return "匿名用户";
+    }
+    if ($user->created_at > now()->subDay()) {
+        return '新用户';
+    }
+    //FIXME: 需要用户表维护最后提现时间字段withdraw_at
+    if (isset($user->withdraw_at)) {
+        return "未提现用户";
+    }
+    return '老用户';
+}
