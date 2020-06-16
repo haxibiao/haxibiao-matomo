@@ -148,13 +148,13 @@ class MatomoClient extends Command
 
         //记录是哪个web服务器来的
         $event['server'] = 'local';
+        $event['cdt']    = time();
 
         $event['dimension1'] = 'android';
         $event['dimension2'] = 'xiaomi';
         $event['dimension3'] = '1.4';
-        $event['dimension4'] = 'build2';
-        $event['dimension5'] = '测试新用户';
-        $event['dimension6'] = '测试华为';
+        $event['dimension4'] = '测试新用户';
+        $event['dimension5'] = '测试华为';
 
         $event['category'] = 'launch';
         $event['action']   = 'visited';

@@ -48,7 +48,7 @@ class MatomoProxy extends Command
             'matomo' => config('matomo.matomo_url'),
         ];
         $tracker = new \MatomoTracker($config['siteId'], $config['matomo']);
-        // $tracker->setCountry('中国'); //TODO: 需要tokenAuth
+        $tracker->setCountry('中国');
         $tracker->setBrowserLanguage('zh-cn');
         $tracker->setTokenAuth(config('matomo.token_auth'));
         $tracker->disableCookieSupport();

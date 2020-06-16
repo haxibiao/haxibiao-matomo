@@ -39,7 +39,7 @@ function app_track_event($category, $action = null, $name = false, $value = fals
         $tracker->setIp(getIp());
         $tracker->setTokenAuth(config('matomo.token_auth'));
         $tracker->setRequestTimeout(1); //最多卡1s
-        $tracker->setForceVisitDateTime(now()->timestamp);
+        $tracker->setForceVisitDateTime(time());
 
         $tracker->setCustomVariable(1, '系统', $event['dimension1'], 'event');
         $tracker->setCustomVariable(2, '来源', $event['dimension2'], 'event');
@@ -64,6 +64,7 @@ function wrapMatomoEventData($event)
 
     //传给自定义变量 服务器
     $event['server'] = gethostname();
+    $event['cdt']    = time();
 
     $event['dimension1'] = getOsSystemVersion(); //设备系统带版本
     $event['dimension2'] = get_referer(); //下载渠道
@@ -77,7 +78,6 @@ function wrapMatomoEventData($event)
 
 function sendMatomoTcpEvent(array $event)
 {
-    $event['cdt'] = time();
     try {
         $client = new \swoole_client(SWOOLE_SOCK_TCP); //同步阻塞？？
         //默认0.1秒就timeout, 所以直接丢给本地matomo:server
