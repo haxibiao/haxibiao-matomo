@@ -158,26 +158,17 @@ class MatomoProxy extends Command
                 $tracker->enableBulkTracking();
                 //循环send
                 foreach ($groupEvents as $event) {
-                    $tracker->setCustomVariable(1, "服务器", $event->server, "visit");
-                    $tracker->setCustomVariable(2, "用户", $event->dimension5, "visit");
-                    $tracker->setCustomVariable(3, "机型", $event->dimension6, "visit");
+                    $tracker->setCustomVariable(1, '机型', $event->dimension5, 'visit');
 
                     $tracker->setUserId($event->user_id);
                     $tracker->setIp($event->ip);
                     $tracker->setForceVisitDateTime($event->cdt);
 
-                    //设备系统
-                    $tracker->setCustomTrackingParameter('dimension1', $event->dimension1);
-                    //安装来源
-                    $tracker->setCustomTrackingParameter('dimension2', $event->dimension2);
-                    //APP版本
-                    $tracker->setCustomTrackingParameter('dimension3', $event->dimension3);
-                    //APP build
-                    $tracker->setCustomTrackingParameter('dimension4', $event->dimension4);
-                    //新老用户分类
-                    $tracker->setCustomTrackingParameter('dimension5', $event->dimension5);
-                    //用户机型
-                    $tracker->setCustomTrackingParameter('dimension6', $event->dimension6);
+                    $tracker->setCustomVariable(1, '系统', $event->dimension1, 'event');
+                    $tracker->setCustomVariable(2, '来源', $event->dimension2, 'event');
+                    $tracker->setCustomVariable(3, '版本', $event->dimension3, 'event');
+                    $tracker->setCustomVariable(4, '用户', $event->dimension4, 'event');
+                    $tracker->setCustomVariable(5, "服务器", $event->server, "event");
 
                     // $url = $tracker->getUrlTrackEvent($event->category, $event->action, $event->name, $event->value);
                     //send

@@ -32,13 +32,8 @@ function app_track_event($category, $action = null, $name = false, $value = fals
     } else {
         //直接发送，兼容matomo 3.13.6
         $tracker = new \MatomoTracker(config('matomo.matomo_id'), config('matomo.matomo_url'));
-        $tracker->setCustomVariable(1, "服务器", gethostname(), "visit");
-        $user_type = '游客';
-        if ($user = checkUser()) {
-            $user_type = $user->create_at > today() ? '老用户' : '新用户';
-        }
-        $tracker->setCustomVariable(2, "用户", $user_type, "visit");
-        $tracker->setCustomVariable(3, "机型", request()->header('brand'), "visit");
+        //用户机型
+        $tracker->setCustomVariable(1, '机型', $event['dimension5'], 'visit');
 
         $tracker->setUserId(getUniqueUserId());
         $tracker->setIp(getIp());
@@ -46,18 +41,11 @@ function app_track_event($category, $action = null, $name = false, $value = fals
         $tracker->setRequestTimeout(1); //最多卡1s
         $tracker->setForceVisitDateTime(now()->timestamp);
 
-        //设备系统
-        $tracker->setCustomTrackingParameter('dimension1', $event['dimension1']);
-        //安装来源
-        $tracker->setCustomTrackingParameter('dimension2', $event['dimension2']);
-        //APP版本
-        $tracker->setCustomTrackingParameter('dimension3', $event['dimension3']);
-        //APP build
-        $tracker->setCustomTrackingParameter('dimension4', $event['dimension4']);
-        //新老用户分类
-        $tracker->setCustomTrackingParameter('dimension5', $event['dimension5']);
-        //用户机型
-        $tracker->setCustomTrackingParameter('dimension6', $event['dimension6']);
+        $tracker->setCustomVariable(1, '系统', $event['dimension1'], 'event');
+        $tracker->setCustomVariable(2, '来源', $event['dimension2'], 'event');
+        $tracker->setCustomVariable(3, '版本', $event['dimension3'], 'event');
+        $tracker->setCustomVariable(4, '用户', $event['dimension4'], 'event');
+        $tracker->setCustomVariable(5, "服务器", gethostname(), "event");
 
         try {
             //直接发送到matomo
@@ -80,9 +68,8 @@ function wrapMatomoEventData($event)
     $event['dimension1'] = getOsSystemVersion(); //设备系统带版本
     $event['dimension2'] = get_referer(); //下载渠道
     $event['dimension3'] = getAppVersion(); //版本
-    $event['dimension4'] = getAppVersion() . "(build" . getAppBuild() . ")"; //热更新
-    $event['dimension5'] = getUserCategoryTag(); //新老用户分类
-    $event['dimension6'] = getDeviceBrand(); //用户机型品牌
+    $event['dimension4'] = getUserCategoryTag(); //新老用户分类
+    $event['dimension5'] = getDeviceBrand(); //用户机型品牌
 
     $event['siteId'] = config('matomo.matomo_id');
     return $event;
