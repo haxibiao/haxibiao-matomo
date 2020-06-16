@@ -158,17 +158,17 @@ class MatomoProxy extends Command
                 $tracker->enableBulkTracking();
                 //循环send
                 foreach ($groupEvents as $event) {
-                    $tracker->setCustomVariable(1, '机型', $event->dimension5, 'visit');
+                    // $tracker->setCustomVariable(1, '机型', $event->dimension5, 'visit');
 
                     $tracker->setUserId($event->user_id);
                     $tracker->setIp($event->ip);
                     $tracker->setForceVisitDateTime($event->cdt);
 
-                    $tracker->setCustomVariable(1, '系统', $event->dimension1, 'event');
-                    $tracker->setCustomVariable(2, '来源', $event->dimension2, 'event');
-                    $tracker->setCustomVariable(3, '版本', $event->dimension3, 'event');
-                    $tracker->setCustomVariable(4, '用户', $event->dimension4, 'event');
-                    $tracker->setCustomVariable(5, "服务器", $event->server, "event");
+                    $tracker->setCustomVariable(1, '系统', $event->dimension1, 'visit');
+                    $tracker->setCustomVariable(2, '机型+来源', $event->dimension5 . "-" . $event->dimension2, 'visit');
+                    $tracker->setCustomVariable(3, '版本', $event->dimension3, 'visit');
+                    $tracker->setCustomVariable(4, '用户', $event->dimension4, 'visit');
+                    $tracker->setCustomVariable(5, "服务器", $event->server, "visit");
 
                     // $url = $tracker->getUrlTrackEvent($event->category, $event->action, $event->name, $event->value);
                     //send

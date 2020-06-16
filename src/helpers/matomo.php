@@ -33,7 +33,7 @@ function app_track_event($category, $action = null, $name = false, $value = fals
         //直接发送，兼容matomo 3.13.6
         $tracker = new \MatomoTracker(config('matomo.matomo_id'), config('matomo.matomo_url'));
         //用户机型
-        $tracker->setCustomVariable(1, '机型', $event['dimension5'], 'visit');
+        // $tracker->setCustomVariable(1, '机型', $event['dimension5'], 'visit');
 
         $tracker->setUserId(getUniqueUserId());
         $tracker->setIp(getIp());
@@ -41,11 +41,11 @@ function app_track_event($category, $action = null, $name = false, $value = fals
         $tracker->setRequestTimeout(1); //最多卡1s
         $tracker->setForceVisitDateTime(time());
 
-        $tracker->setCustomVariable(1, '系统', $event['dimension1'], 'event');
-        $tracker->setCustomVariable(2, '来源', $event['dimension2'], 'event');
-        $tracker->setCustomVariable(3, '版本', $event['dimension3'], 'event');
-        $tracker->setCustomVariable(4, '用户', $event['dimension4'], 'event');
-        $tracker->setCustomVariable(5, "服务器", gethostname(), "event");
+        $tracker->setCustomVariable(1, '系统', $event['dimension1'], 'visit');
+        $tracker->setCustomVariable(2, '机型+来源', $event['dimension5'] . "-" . $event['dimension2'], 'visit');
+        $tracker->setCustomVariable(3, '版本', $event['dimension3'], 'visit');
+        $tracker->setCustomVariable(4, '用户', $event['dimension4'], 'visit');
+        $tracker->setCustomVariable(5, "服务器", gethostname(), "visit");
 
         try {
             //直接发送到matomo
