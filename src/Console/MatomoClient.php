@@ -141,7 +141,7 @@ class MatomoClient extends Command
 
     public function getTestEvent()
     {
-        $site_id          = $this->option('siteid') ?? config('matomo.site_id');
+        $site_id          = $this->option('siteid') ?? config('matomo.matomo_id');
         $event['siteId']  = $site_id;
         $event['user_id'] = rand(1, 3);
         $event['ip']      = '127.0.0.1';
@@ -167,7 +167,7 @@ class MatomoClient extends Command
     {
         if (!$this->tracker) {
             $config = [
-                'siteId' => $this->option('siteid') ?? config('matomo.site_id'),
+                'siteId' => $this->option('siteid') ?? config('matomo.matomo_id'),
                 'matomo' => config('matomo.app_url'),
             ];
             $this->tracker = new \MatomoTracker($config['siteId'], $config['matomo']);
