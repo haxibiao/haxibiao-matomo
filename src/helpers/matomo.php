@@ -16,6 +16,11 @@ function track_web($category, $action = null, $name = null, $value = null)
  */
 function app_track_event($category, $action = null, $name = false, $value = false)
 {
+    //开启matomo开关功能
+    if (!config('matomo.on')) {
+        return;
+    }
+
     $event['category'] = $category;
     $event['action']   = $action ?? $category;
     $event['name']     = $name;
