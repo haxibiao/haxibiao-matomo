@@ -14,7 +14,7 @@ function track_web($category, $action = null, $name = null, $value = null)
 /**
  * 主要的后端事件track到matomo
  */
-function app_track_event($category, $action = null, $name = false, $value = false)
+function app_track_event($category, $action = null, $name = null, $value = null)
 {
     //开启matomo开关功能
     if (!config('matomo.on')) {
@@ -111,35 +111,6 @@ function tcp_unpack(string $data): string
     return substr($data, 2, unpack('n', substr($data, 0, 2), 0)[1]);
 }
 
-//FIXME: 开始主要用这个埋点，能快速区别新老用户的事件趋势和分布， 重构答赚里的这个不同的名字...
-function app_track_user_event($action, $name = false, $value = 1)
-{
-    //区分新老用户在事件分类不好算维度，还是靠真的维度去区分吧
-    // $category = getUserCategoryTag();
-    $category = $action;
-    app_track_event($category, $action, $name, $value);
-}
-
-function app_track_reward_video($action, $name = false, $value = false)
-{
-    app_track_event("激励视频", $action, $name, $value);
-}
-
-function app_track_user($action, $name = false, $value = false)
-{
-    app_track_event("用户行为", $action, $name, $value);
-}
-
-function app_track_question($action, $name = false, $value = false)
-{
-    app_track_event("答题出题", $action, $name, $value);
-}
-
-function app_track_task($action, $name = false, $value = false)
-{
-    app_track_event("任务", $action, $name, $value);
-}
-
 function getUniqueUserId()
 {
     try {
@@ -147,16 +118,6 @@ function getUniqueUserId()
     } catch (\Exception $ex) {
         return getIp();
     }
-}
-
-function app_track_app_download()
-{
-    app_track_user('App下载', 'app_download');
-}
-
-function app_track_send_message()
-{
-    app_track_user('发送消息');
 }
 
 /**
