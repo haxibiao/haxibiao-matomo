@@ -47,10 +47,11 @@ function app_track_event($category, $action = null, $name = false, $value = fals
         $tracker->setForceVisitDateTime(time());
 
         $tracker->setCustomVariable(1, '系统', $event['dimension1'], 'visit');
-        $tracker->setCustomVariable(2, '机型+来源', $event['dimension5'] . "-" . $event['dimension2'], 'visit');
+        $tracker->setCustomVariable(2, '来源', $event['dimension2'], 'visit');
         $tracker->setCustomVariable(3, '版本', $event['dimension3'], 'visit');
         $tracker->setCustomVariable(4, '用户', $event['dimension4'], 'visit');
         $tracker->setCustomVariable(5, "服务器", gethostname(), "visit");
+        $tracker->setCustomVariable(6, '机型', $event['dimension5'], 'visit');
 
         try {
             //直接发送到matomo
