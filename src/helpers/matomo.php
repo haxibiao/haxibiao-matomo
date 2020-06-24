@@ -26,10 +26,6 @@ function app_track_event($category, $action = null, $name = null, $value = null)
     $event['name']     = $name;
     //避免进入的value有对象，不是String会异常
     $event['value'] = $value instanceof String ? $value : false;
-    $event['cdt']   = now()->timestamp;
-
-    //包装必要的事件参数进入数组
-    $event = wrapMatomoEventData($event);
 
     if (config('matomo.use_swoole')) {
         //TCP发送事件数据
@@ -84,6 +80,8 @@ function wrapMatomoEventData($event)
 
 function sendMatomoTcpEvent(array $event)
 {
+    //包装必要的事件参数进入数组
+    $json = json_encode(wrapMatomoEventData($event));
     try {
         $client = new \swoole_client(SWOOLE_SOCK_TCP); //同步阻塞？？
         //默认0.1秒就timeout, 所以直接丢给本地matomo:server
@@ -95,7 +93,7 @@ function sendMatomoTcpEvent(array $event)
             'package_length_offset' => 0,
             'package_body_offset'   => 2,
         ]);
-        $client->send(tcp_pack(json_encode($event)));
+        $client->send(tcp_pack($json));
     } catch (\Throwable $ex) {
         return false;
     }
