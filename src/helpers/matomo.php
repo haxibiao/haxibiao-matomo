@@ -20,6 +20,9 @@ function app_track_event($category, $action = null, $name = null, $value = null)
     if (!config('matomo.on')) {
         return;
     }
+    if (!is_prod()) {
+        return;
+    }
 
     $event['category'] = $category;
     $event['action']   = $action ?? $category;
