@@ -20,7 +20,9 @@ function app_track_event($category, $action = null, $name = null, $value = null)
     if (!config('matomo.on')) {
         return;
     }
-    if (!is_prod()) {
+
+    //UT跳过matomo即可,前面的改动结果停掉了答赚的matomo
+    if (is_testing_env()) {
         return;
     }
 
