@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\matomo;
+namespace Haxibiao\Matomo;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;

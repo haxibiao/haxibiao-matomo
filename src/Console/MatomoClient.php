@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\matomo;
+namespace Haxibiao\Matomo;
 
 use function GuzzleHttp\json_decode;
 use function GuzzleHttp\json_encode;
