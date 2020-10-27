@@ -25,6 +25,9 @@ function app_track_event($category, $action = null, $name = null, $value = null)
     if (is_testing_env()) {
         return;
     }
+    if (is_local_env()){
+        return;
+    }
 
     $event['category'] = $category;
     $event['action']   = $action ?? $category;
