@@ -21,10 +21,10 @@ class MatomoServiceProvider extends ServiceProvider
 
         // Register Commands
         $this->commands([
-            InstallCommand::class,
-            PublishCommand::class,
-            MatomoProxy::class,
-            MatomoClient::class,
+            Console\InstallCommand::class,
+            Console\PublishCommand::class,
+            Console\MatomoProxy::class,
+            Console\MatomoClient::class,
         ]);
     }
 

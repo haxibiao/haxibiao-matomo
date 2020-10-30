@@ -1,9 +1,8 @@
 <?php
 
-namespace Haxibiao\Matomo;
+namespace Haxibiao\Matomo\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class MatomoProxy extends Command
 {

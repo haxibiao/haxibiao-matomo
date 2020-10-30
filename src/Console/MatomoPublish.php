@@ -1,5 +1,5 @@
 <?php
-namespace Haxibiao\Matomo;
+namespace Haxibiao\Matomo\Console;
 
 use Illuminate\Console\Command;
 

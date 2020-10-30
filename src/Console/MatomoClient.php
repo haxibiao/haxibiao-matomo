@@ -1,6 +1,6 @@
 <?php
 
-namespace Haxibiao\Matomo;
+namespace Haxibiao\Matomo\Console;
 
 use function GuzzleHttp\json_decode;
 use function GuzzleHttp\json_encode;
