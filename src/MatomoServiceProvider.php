@@ -3,6 +3,7 @@
 namespace Haxibiao\Matomo;
 
 use Illuminate\Support\ServiceProvider;
+use Haxibiao\Matomo\Console\InstallCommand;
 
 class MatomoServiceProvider extends ServiceProvider
 {
