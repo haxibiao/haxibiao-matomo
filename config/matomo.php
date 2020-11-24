@@ -23,4 +23,6 @@ return [
     'web_id'     => env('MATOMO_WEB_ID', env('MATOMO_ID')),
     //Web事件统计查看的matomo url
     'web_url'    => env('MATOMO_WEB_URL', env('MATOMO_URL')),
+    //是否开启管理员账号行为不埋点
+    'matomo_user'    => env('MATOMO_USER', false),
 ];
